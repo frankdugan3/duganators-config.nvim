@@ -1,6 +1,8 @@
 local opt = vim.opt
 local g = vim.g
 
+opt.backupcopy = 'yes'
+
 opt.inccommand = 'split'
 
 opt.smartcase = true
