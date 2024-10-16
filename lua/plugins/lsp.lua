@@ -128,7 +128,15 @@ return {
       shfmt = {},
       stylua = {},
       shellcheck = {},
-      tailwindcss = {},
+      tailwindcss = {
+        init_options = {
+          userLanguages = {
+            elixir = 'html-eex',
+            eelixir = 'html-eex',
+            heex = 'html-eex',
+          },
+        },
+      },
       taplo = {},
       zls = {},
       lua_ls = {
