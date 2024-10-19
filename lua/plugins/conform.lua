@@ -23,7 +23,9 @@ return {
     formatters_by_ft = {
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier' },
+      markdown = { 'prettierd', 'prettier' },
       html = { 'prettierd', 'prettier' },
+      css = { 'prettierd', 'prettier' },
     },
   },
 }
