@@ -138,6 +138,22 @@ return {
         },
       },
       taplo = {},
+      texlab = {
+        settings = {
+          texlab = {
+            build = {
+              executable = 'tectonic',
+              args = { '-X', 'compile', '%f', '--synctex', '--keep-logs', '--keep-intermediates' },
+              onSave = true,
+              forwardSearchAfter = true,
+            },
+            forwardSearch = {
+              executable = 'zathura',
+              args = { '--synctex-forward', '%1:1:%f', '%p' },
+            },
+          },
+        },
+      },
       zls = {},
       lua_ls = {
         settings = {
