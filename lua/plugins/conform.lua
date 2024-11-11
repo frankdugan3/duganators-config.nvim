@@ -21,6 +21,7 @@ return {
       }
     end,
     formatters_by_ft = {
+      typst = { 'typstyle' },
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier' },
       markdown = { 'prettierd', 'prettier' },

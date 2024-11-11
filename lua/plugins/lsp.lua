@@ -127,6 +127,7 @@ return {
       prettier = {},
       shfmt = {},
       stylua = {},
+      tinymist = {},
       shellcheck = {},
       tailwindcss = {
         init_options = {
