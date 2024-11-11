@@ -127,7 +127,6 @@ return {
       prettier = {},
       shfmt = {},
       stylua = {},
-      tinymist = {},
       shellcheck = {},
       tailwindcss = {
         init_options = {
@@ -139,6 +138,12 @@ return {
         },
       },
       taplo = {},
+      tinymist = {
+        settings = {
+          exportPdf = 'onType',
+          formatterMode = 'typstyle',
+        },
+      },
       texlab = {
         settings = {
           texlab = {
