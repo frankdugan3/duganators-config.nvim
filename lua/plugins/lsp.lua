@@ -161,6 +161,7 @@ return {
         },
       },
       zls = {},
+      rust_analyzer = {},
       lua_ls = {
         settings = {
           Lua = {

@@ -21,6 +21,7 @@ return {
       }
     end,
     formatters_by_ft = {
+      rust = { 'rustfmt', lsp_format = 'fallback' },
       typst = { 'tinymist' },
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier' },
