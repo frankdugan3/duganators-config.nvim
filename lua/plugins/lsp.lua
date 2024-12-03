@@ -72,16 +72,17 @@ return {
         server_capabilities = {
           completionProvider = true,
           definitionProvider = true,
+          documentFormattingProvider = false,
+        },
+      },
+      lexical = {
+        root_dir = require('lspconfig.util').root_pattern { 'mix.exs' },
+        server_capabilities = {
+          completionProvider = vim.NIL,
+          definitionProvider = vim.NIL,
           documentFormattingProvider = true,
         },
       },
-      -- lexical = {
-      --   root_dir = require("lspconfig.util").root_pattern { "mix.exs" },
-      --   server_capabilities = {
-      --     completionProvider = vim.NIL,
-      --     definitionProvider = false,
-      --   },
-      -- },
       eslint = {},
       emmet_language_server = {
         filetypes = { 'css', 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'sass', 'scss', 'pug', 'typescriptreact', 'heex', 'elixir' },
@@ -128,6 +129,7 @@ return {
       shfmt = {},
       stylua = {},
       shellcheck = {},
+      ts_ls = {},
       tailwindcss = {
         init_options = {
           userLanguages = {
