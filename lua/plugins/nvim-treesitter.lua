@@ -21,6 +21,7 @@ return { -- Highlight, edit, and navigate code
       'markdown',
       'rust',
       'toml',
+      'javascript',
       -- 'typsecript',
       'vim',
       'vimdoc',
