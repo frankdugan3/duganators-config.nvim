@@ -11,7 +11,7 @@ return {
       { '<leader>w', group = '[W]orkspace' },
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk' },
-      { '<leader>\\', group = 'Toggle NeoTree' },
+      { '<leader>\\', group = 'Show Yazi' },
       { '<leader>h', group = 'Git [H]unk', mode = 'v' },
     }
   end,

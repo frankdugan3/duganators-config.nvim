@@ -7,3 +7,12 @@ api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+api.nvim_create_autocmd('VimEnter', {
+  pattern = { '*/', '.' },
+  callback = function()
+    if vim.fn.isdirectory(vim.fn.getcwd()) == 1 then
+      require('telescope.builtin').find_files()
+    end
+  end,
+})
