@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd('TermOpen', {
 })
 
 -- Easily hit escape in terminal mode.
-vim.keymap.set('t', '<esc><esc>', '<c-\\><c-n>')
+vim.keymap.set('t', '<C-Esc>', '<c-\\><c-n>')
 
 -- Easy navigation from terminals
 vim.keymap.set('t', '<c-h>', '<c-\\><c-n><c-w>h')
@@ -24,13 +24,10 @@ local terminal_windows = {
   ['J'] = { win = nil, buf = nil },
   ['K'] = { win = nil, buf = nil },
   ['L'] = { win = nil, buf = nil },
-  ['last'] = 'H',
 }
 
-local function toggle_terminal(shortcut)
-  local direction = shortcut:sub(-1):upper()
+local function toggle_terminal(direction)
   local state = terminal_windows[direction]
-  terminal_windows['last'] = shortcut
 
   if state.win and vim.api.nvim_win_is_valid(state.win) then
     vim.api.nvim_win_hide(state.win)
@@ -57,24 +54,19 @@ local function toggle_terminal(shortcut)
   end
 end
 
-vim.keymap.set('n', ',th', function()
+local allModes = { 'n', 'i', 'v', 't' }
+vim.keymap.set(allModes, '<C-S-h>', function()
   toggle_terminal 'H'
 end)
 
-vim.keymap.set('n', ',tj', function()
+vim.keymap.set(allModes, '<C-S-j>', function()
   toggle_terminal 'J'
 end)
 
-vim.keymap.set('n', ',tk', function()
+vim.keymap.set(allModes, '<C-S-k>', function()
   toggle_terminal 'K'
 end)
 
-vim.keymap.set('n', ',tl', function()
+vim.keymap.set(allModes, '<C-S-l>', function()
   toggle_terminal 'L'
-end)
-
-vim.keymap.set('n', '<leader>`', function()
-  local last = terminal_windows['last']
-  toggle_terminal(last)
-  print(last)
 end)

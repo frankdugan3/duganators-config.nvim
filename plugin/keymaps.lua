@@ -13,13 +13,32 @@ set('n', '<CR>', function()
 end, { expr = true })
 
 -- Basic window split movement keybinds
-set('n', '<c-j>', '<c-w><c-j>')
-set('n', '<c-k>', '<c-w><c-k>')
-set('n', '<c-l>', '<c-w><c-l>')
-set('n', '<c-h>', '<c-w><c-h>')
+set({ 'n', 'v' }, '<C-j>', '<C-w><C-j>')
+set({ 'n', 'v' }, '<C-k>', '<C-w><C-k>')
+set({ 'n', 'v' }, '<C-l>', '<C-w><C-l>')
+set({ 'n', 'v' }, '<C-h>', '<C-w><C-h>')
+set('i', '<C-j>', '<Esc><C-w><C-j>')
+set('i', '<C-k>', '<Esc><C-w><C-k>')
+set('i', '<C-l>', '<Esc><C-w><C-l>')
+set('i', '<C-h>', '<Esc><C-w><C-h>')
 
-set('n', '<leader>x', '<cmd>.lua<CR>', { desc = 'Execute the current line' })
-set('n', '<leader><leader>x', '<cmd>source %<CR>', { desc = 'Execute the current file' })
+set('n', '<leader>xl', '<cmd>.lua<CR>', { desc = 'Execute the current line' })
+set('n', '<leader>xf', '<cmd>source %<CR>', { desc = 'Execute the current file' })
+
+local function executeSelectedLua()
+  local selected_text = vim.fn.getreg '"'
+  local func, err = load(selected_text)
+  if func then
+    local success, result = pcall(func)
+    if not success then
+      print('Error executing Lua code: ' .. result)
+    end
+  else
+    print('Error loading Lua code: ' .. err)
+  end
+end
+
+vim.keymap.set('v', '<leader>x', executeSelectedLua, { noremap = true, silent = true, desc = 'Execute the selected Lua code' })
 
 set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
