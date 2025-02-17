@@ -14,9 +14,10 @@ return {
       floats = 'dark',
     },
     init = function()
-      vim.cmd.colorscheme 'moonfly'
       vim.cmd.hi 'Comment gui=none'
       vim.g.moonflyItalics = true
+      vim.g.moonflyTransparent = true
+      vim.cmd.colorscheme 'moonfly'
     end,
   },
 }
