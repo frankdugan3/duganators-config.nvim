@@ -21,6 +21,8 @@ return {
       }
     end,
     formatters_by_ft = {
+      templ = { 'templ' },
+      go = { 'goimports', 'gofmt' },
       rust = { 'rustfmt', lsp_format = 'fallback' },
       typst = { 'tinymist' },
       lua = { 'stylua' },
