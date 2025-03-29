@@ -66,6 +66,13 @@ return {
 
     local servers = {
       arduino_language_server = {},
+      cssls = {
+        init_options = { provideFormatter = false },
+        settings = {
+          -- Probably using Tailwind, will give false positives
+          css = { validate = false },
+        },
+      },
       delve = {},
       elixirls = {
         root_dir = require('lspconfig.util').root_pattern { 'mix.exs' },
