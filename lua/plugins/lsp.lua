@@ -84,7 +84,7 @@ return {
       },
       eslint = {},
       emmet_language_server = {
-        filetypes = { 'css', 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'sass', 'scss', 'pug', 'typescriptreact', 'heex', 'elixir' },
+        filetypes = { 'eruby', 'html', 'javascript', 'javascriptreact', 'less', 'pug', 'typescriptreact', 'heex', 'elixir' },
       },
       gofumpt = {},
       goimports = {},
