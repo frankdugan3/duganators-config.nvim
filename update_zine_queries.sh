@@ -1,14 +1,24 @@
 #!/bin/bash
 
+set -e
+
 # This is only needed until proper packages are available:
 # https://zine-ssg.io/docs/editors/neovim/
 
-cd ~/git/ziggy/tree-sitter-ziggy/queries && git pull
-cd ~/git/supermd/editors/neovim/queries/supermd_inline && git pull
-cd ~/git/superhtml/tree-sitter-superhtml/queries && git pull
+cd ~/git/ziggy 
+git pull
+cp -r tree-sitter-ziggy/queries ~/.config/nvim/queries/ziggy
+cp -r tree-sitter-ziggy-schema/queries ~/.config/nvim/queries/ziggy_schema
+zig build
+cp zig-out/bin/ziggy ~/.local/bin/
 
-cp -r ~/git/ziggy/tree-sitter-ziggy/queries ~/.config/nvim/queries/ziggy
-cp -r ~/git/ziggy/tree-sitter-ziggy-schema/queries ~/.config/nvim/queries/ziggy_schema
-cp -r ~/git/supermd/editors/neovim/queries/supermd ~/.config/nvim/queries/supermd
-cp -r ~/git/supermd/editors/neovim/queries/supermd_inline ~/.config/nvim/queries/supermd_inline
-cp -r ~/git/superhtml/tree-sitter-superhtml/queries ~/.config/nvim/queries/superhtml  
+cd ~/git/supermd
+git pull
+cp -r editors/neovim/queries/supermd ~/.config/nvim/queries/supermd
+cp -r editors/neovim/queries/supermd_inline ~/.config/nvim/queries/supermd_inline
+
+cd ~/git/superhtml 
+git pull
+zig build
+cp zig-out/bin/superhtml ~/.local/bin/
+cp -r tree-sitter-superhtml/queries ~/.config/nvim/queries/superhtml

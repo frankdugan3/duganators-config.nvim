@@ -20,6 +20,26 @@ return {
         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
       }
     end,
+    formatters = {
+      superhtml = {
+        inherit = false,
+        command = 'superhtml',
+        stdin = true,
+        args = { 'fmt', '--stdin-super' },
+      },
+      ziggy = {
+        inherit = false,
+        command = 'ziggy',
+        stdin = true,
+        args = { 'fmt', '--stdin' },
+      },
+      ziggy_schema = {
+        inherit = false,
+        command = 'ziggy',
+        stdin = true,
+        args = { 'fmt', '--stdin-schema' },
+      },
+    },
     formatters_by_ft = {
       templ = { 'templ' },
       go = { 'goimports', 'gofmt' },
@@ -30,6 +50,9 @@ return {
       markdown = { 'prettierd', 'prettier' },
       html = { 'prettierd', 'prettier' },
       css = { 'prettierd', 'prettier' },
+      shtml = { 'superhtml' },
+      ziggy = { 'ziggy' },
+      ziggy_schema = { 'ziggy_schema' },
     },
   },
 }
