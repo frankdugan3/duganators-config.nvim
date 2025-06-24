@@ -4,7 +4,7 @@ local set = vim.keymap.set
 set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 set('n', '<CR>', function()
   ---@diagnostic disable-next-line: undefined-field
-  if vim.opt.hlsearch:get() then
+  if vim.v.hlsearch == 1 then
     vim.cmd.nohl()
     return ''
   else
