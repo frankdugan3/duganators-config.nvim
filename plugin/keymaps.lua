@@ -22,6 +22,16 @@ set('i', '<C-k>', '<Esc><C-w><C-k>')
 set('i', '<C-l>', '<Esc><C-w><C-l>')
 set('i', '<C-h>', '<Esc><C-w><C-h>')
 
+-- Center screen when jumping
+set('n', 'n', 'nzzzv', { desc = 'Next search result (centered)' })
+set('n', 'N', 'Nzzzv', { desc = 'Previous search result (centered)' })
+set('n', '<C-d>', '<C-d>zz', { desc = 'Half page down (centered)' })
+set('n', '<C-u>', '<C-u>zz', { desc = 'Half page up (centered)' })
+
+-- Better indenting in visual mode
+set('v', '<', '<gv', { desc = 'Indent left and reselect' })
+set('v', '>', '>gv', { desc = 'Indent right and reselect' })
+
 set('n', '<leader>xl', '<cmd>.lua<CR>', { desc = 'Execute the current line' })
 set('n', '<leader>xf', '<cmd>source %<CR>', { desc = 'Execute the current file' })
 
