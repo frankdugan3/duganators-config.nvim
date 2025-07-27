@@ -236,17 +236,13 @@ set('n', '<leader>s/', function()
   }
 end, { desc = '[S]earch [/] in Open Files' })
 
-
 which_key.add { '<leader>n', group = '[N]eovim' }
 which_key.add { '<leader>ns', group = '[S]earch' }
 set('n', '<leader>nr', reload_config, { desc = '[R]eload the config' })
 set('n', '<leader>nu', function()
   vim.pack.update(nil, { force = true })
-end, { desc = '[U]pdate plugins' })
-set('n', '<leader>nsf', function()
-  tsb.find_files { cwd = fn.stdpath 'config' }
-end, { desc = 'Search Neovim [f]iles' })
-
-set('n', '<leader>nsg', function()
-  tsb.live_grep { cwd = fn.stdpath 'config' }
-end, { desc = 'Search Neovim via [g]rep' })
+  cmd('MasonUpdate')
+end, { desc = '[U]pdate plugins and tools' })
+set('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Show [M]ason' })
+set('n', '<leader>nsf', function() tsb.find_files { cwd = fn.stdpath 'config' } end, { desc = 'Search Neovim [f]iles' })
+set('n', '<leader>nsg', function() tsb.live_grep { cwd = fn.stdpath 'config' } end, { desc = 'Search Neovim via [g]rep' })
