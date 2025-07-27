@@ -14,9 +14,10 @@ What I basically did to get here:
 
 - Try out [LazyVim](https://www.lazyvim.org/) for a month or two to get reasonably proficient with Neovim.
 - Started a new config from [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
-    - Deleted everything I didn't want
-    - Modularized everything
-    - Added in some things I like
-    - Added in some stuff from [teej's config](https://github.com/tjdevries/config.nvim) (see [autocomplete](https://www.youtube.com/watch?v=22mrSjknDHI) and [debugging](https://www.youtube.com/watch?v=lyNfnI-B640))
+  - Deleted everything I didn't want
+  - Modularized everything
+  - Added in some things I like
+  - Added in some stuff from [teej's config](https://github.com/tjdevries/config.nvim) (see [autocomplete](https://www.youtube.com/watch?v=22mrSjknDHI) and [debugging](https://www.youtube.com/watch?v=lyNfnI-B640))
+- Slowly iterated based on real-world usage and experience
 
 You may be better served by exploring those options on your own, and don't forget to RTFM!
