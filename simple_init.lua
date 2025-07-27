@@ -7,8 +7,8 @@ local cmd = vim.cmd
 local fn = vim.fn
 -- local lsp = vim.lsp
 
-local config_file = fn.expand("~") .. "/.config/nvim/simple_init.lua"
-local wallust_file = fn.expand("~") .. "/.cache/wallust/colors_neopywal.vim"
+local config_file = os.getenv("HOME") .. "/.config/nvim/simple_init.lua"
+local wallust_file = os.getenv("HOME") .. "/.cache/wallust/colors_neopywal.vim"
 local tab_width = 2
 local leader = ' '
 
@@ -41,6 +41,13 @@ api.nvim_create_autocmd('VimEnter', {
     if fn.isdirectory(fn.getcwd()) == 1 then
       require('telescope.builtin').find_files()
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
+  callback = function()
+    vim.schedule(require("chezmoi.commands.__edit").watch)
   end,
 })
 
@@ -109,7 +116,6 @@ else
 end
 
 vim.pack.add({
-  "https://github.com/stevearc/conform.nvim",
   "https://github.com/echasnovski/mini.nvim",
   "https://github.com/folke/todo-comments.nvim",
   "https://github.com/folke/which-key.nvim",
@@ -123,9 +129,25 @@ vim.pack.add({
   "https://github.com/nvim-telescope/telescope-ui-select.nvim",
   "https://github.com/nvim-telescope/telescope.nvim",
   "https://github.com/nvim-tree/nvim-web-devicons",
+  "https://github.com/stevearc/conform.nvim",
+  "https://github.com/xvzc/chezmoi.nvim",
   { src = "https://github.com/saghen/blink.cmp", version = "v1.6.0" },
 })
 
+require('chezmoi').setup({
+  edit = {
+    watch = false,
+    force = false,
+  },
+  notification = {
+    on_open = true,
+    on_apply = true,
+    on_watch = false,
+  },
+  telescope = {
+    select = { "<CR>" },
+  },
+})
 require('mini.ai').setup { n_lines = 500 }
 require('mini.statusline').setup { use_icons = g.have_nerd_font }
 require('mini.surround').setup {
@@ -146,7 +168,7 @@ require("telescope").setup({
     ['ui-select'] = {
       require('telescope.themes').get_dropdown(),
     },
-  }
+  },
 })
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'ui-select')
@@ -177,6 +199,9 @@ set('n', '<CR>', function()
     return '<CR>'
   end
 end, { expr = true })
+
+set('', '<C-s>', '<cmd>w<cr>', { desc = 'Save (:w)' })
+set('', '<CS-s>', '<cmd>wa<cr>', { desc = 'Save all (:wa)' })
 
 -- Basic window split movement keybinds
 set({ 'n', 'v' }, '<C-j>', '<C-w><C-j>')
@@ -211,6 +236,7 @@ set('n', '<leader>cw', '<cmd>Yazi cwd<cr>', { desc = "Open the file manager in n
 set('n', '<c-up>', '<cmd>Yazi toggle<cr>', { desc = 'Resume the last yazi session', })
 
 which_key.add { '<leader>s', group = '[S]earch' }
+set('n', '<leader>sz', function() require("telescope").extensions.chezmoi.find_files() end, { desc = 'Search Che[z]moi-managed files' })
 set('n', '<leader>sh', tsb.help_tags, { desc = 'Search [h]elp' })
 set('n', '<leader>sk', tsb.keymaps, { desc = 'Search [k]eymaps' })
 set('n', '<leader>sf', tsb.find_files, { desc = 'Search [f]iles' })
