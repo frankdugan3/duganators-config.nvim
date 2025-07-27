@@ -68,7 +68,7 @@ return {
           name = 'Ziggy LSP',
           cmd = { 'ziggy', 'lsp' },
           root_dir = vim.loop.cwd(),
-          flags = { exit_timeout = 1000 },
+          flags = { exit_timeout = 1000, debounce_text_changes = 200 },
         }
       end,
     })
@@ -81,7 +81,7 @@ return {
           name = 'Ziggy LSP',
           cmd = { 'ziggy', 'lsp', '--schema' },
           root_dir = vim.loop.cwd(),
-          flags = { exit_timeout = 1000 },
+          flags = { exit_timeout = 1000, debounce_text_changes = 200 },
         }
       end,
     })
@@ -94,7 +94,7 @@ return {
           name = 'SuperHTML LSP',
           cmd = { 'superhtml', 'lsp' },
           root_dir = vim.loop.cwd(),
-          flags = { exit_timeout = 1000 },
+          flags = { exit_timeout = 1000, debounce_text_changes = 200 },
         }
       end,
     })
