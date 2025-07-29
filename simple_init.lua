@@ -7,7 +7,7 @@ local cmd = vim.cmd
 local fn = vim.fn
 -- local lsp = vim.lsp
 
-local config_file = os.getenv("HOME") .. "/.config/nvim/simple_init.lua"
+local config_file = debug.getinfo(1, "S").source:match("@(.*)")
 local wallust_file = os.getenv("HOME") .. "/.cache/wallust/colors_neopywal.vim"
 local tab_width = 2
 local leader = ' '
@@ -19,6 +19,22 @@ o.packpath = fn.stdpath('data') .. '/site,' .. vim.env.VIMRUNTIME
 local function reload_config()
   cmd("silent! source " .. config_file)
   vim.schedule(function() vim.notify("Config reloaded!", vim.log.levels.INFO) end)
+end
+
+local function update_all_mason_packages()
+  cmd('MasonUpdate')
+  local registry = require("mason-registry")
+  local installed_packages = registry.get_installed_package_names()
+
+  for _, pkg_name in ipairs(installed_packages) do
+    local pkg = registry.get_package(pkg_name)
+    local is_installed, installed_version = pcall(pkg.get_installed_version, pkg)
+    local is_latest, latest_version = pcall(pkg.get_latest_version, pkg)
+
+    if is_installed and is_latest and installed_version ~= latest_version then
+      pkg:install()
+    end
+  end
 end
 
 api.nvim_create_autocmd("BufWritePost", {
@@ -46,8 +62,12 @@ api.nvim_create_autocmd('VimEnter', {
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
-  callback = function()
-    vim.schedule(require("chezmoi.commands.__edit").watch)
+  callback = function(ev)
+    local bufnr = ev.buf
+    local edit_watch = function()
+      require("chezmoi.commands.__edit").watch(bufnr)
+    end
+    vim.schedule(edit_watch)
   end,
 })
 
@@ -142,7 +162,7 @@ require('chezmoi').setup({
   notification = {
     on_open = true,
     on_apply = true,
-    on_watch = false,
+    on_watch = true,
   },
   telescope = {
     select = { "<CR>" },
@@ -164,10 +184,19 @@ require('mini.surround').setup {
 }
 require("todo-comments").setup({})
 require("telescope").setup({
+  defaults = {
+    mappings = {
+      i = {
+        ["<M-d>"] = false,
+        ["<C-S-d>"] = require('telescope.actions').delete_buffer,
+      },
+    },
+  },
   extensions = {
     ['ui-select'] = {
       require('telescope.themes').get_dropdown(),
     },
+    fzf = {}
   },
 })
 pcall(require('telescope').load_extension, 'fzf')
@@ -213,6 +242,9 @@ set('i', '<C-k>', '<Esc><C-w><C-k>')
 set('i', '<C-l>', '<Esc><C-w><C-l>')
 set('i', '<C-h>', '<Esc><C-w><C-h>')
 
+set("v", "<", "<gv", { desc = "Dedent and reselect" })
+set("v", ">", ">gv", { desc = "Indent and reselect" })
+
 set('n', 'n', 'nzzzv', { desc = 'Next search result (centered)' })
 set('n', 'N', 'Nzzzv', { desc = 'Previous search result (centered)' })
 set('n', '<C-d>', '<C-d>zz', { desc = 'Half page down (centered)' })
@@ -225,28 +257,45 @@ set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]ui
 set('n', '<leader>f', function() require('conform').format { lsp_format = "fallback" } end,
   { desc = '[F]ormat current file' })
 
-which_key.add { '<leader>g', group = '[G]it' }
+which_key.add { '<leader>b', group = '[b]uffer' }
+set('n', '<leader>bd', '<cmd>bdelete<cr>', { desc = '[d]elete (close) current buffer' })
+set('n', '<leader>bD', '<cmd>bdelete!<cr>', { desc = 'Force [D]elete (close) current buffer' })
+set('n', '<leader>bs', tsb.buffers, { desc = '[s]earch existing buffers' })
+
+which_key.add { '<leader>g', group = '[g]it' }
 set('n', '<leader>gl', '<cmd>LazyGit<cr>', { desc = '[L]azyGit' })
 set('n', '<leader>gr', '<cmd>LazyGitFilter<cr>', { desc = 'LazyGit [R]eflog' })
 set('n', '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', { desc = 'LazyGit Current [F]ile' })
 set('n', '<leader>gb', '<cmd>LazyGitFilterCurrentFile<cr>', { desc = 'LazyGit Current File Reflog' })
 
 set('n', '<leader>\\', '<cmd>Yazi<cr>', { desc = 'Open yazi at the current file', })
-set('n', '<leader>cw', '<cmd>Yazi cwd<cr>', { desc = "Open the file manager in nvim's working directory", })
 set('n', '<c-up>', '<cmd>Yazi toggle<cr>', { desc = 'Resume the last yazi session', })
 
 which_key.add { '<leader>s', group = '[S]earch' }
-set('n', '<leader>sz', function() require("telescope").extensions.chezmoi.find_files() end, { desc = 'Search Che[z]moi-managed files' })
+set('n', '<leader>sz', function() require("telescope").extensions.chezmoi.find_files() end,
+  { desc = 'Search Che[z]moi-managed files' })
 set('n', '<leader>sh', tsb.help_tags, { desc = 'Search [h]elp' })
 set('n', '<leader>sk', tsb.keymaps, { desc = 'Search [k]eymaps' })
 set('n', '<leader>sf', tsb.find_files, { desc = 'Search [f]iles' })
-set('n', '<leader>ss', tsb.builtin, { desc = 'Search [s]elect Telescope' })
+set('n', '<leader>st', tsb.builtin, { desc = 'Search [t]elescope builtins' })
 set('n', '<leader>sw', tsb.grep_string, { desc = 'Search current [w]ord' })
 set('n', '<leader>sg', tsb.live_grep, { desc = 'Search via [g]rep' })
 set('n', '<leader>sd', tsb.diagnostics, { desc = 'Search [d]iagnostics' })
 set('n', '<leader>sr', tsb.resume, { desc = 'Search [r]esume' })
 set('n', '<leader>s.', tsb.oldfiles, { desc = 'Search recent files ("." for repeat)' })
 set('n', '<leader>sb', tsb.buffers, { desc = 'Search existing [b]uffers' })
+
+
+which_key.add { '<leader>d', group = '[D]otfiles' }
+set('n', '<leader>dc', function() require("yazi").yazi(nil, os.getenv("XDG_CONFIG_HOME")) end,
+  { desc = "Open Yazi in $XDG_CONFIG_HOME", })
+set('n', '<leader>dl', function() require("yazi").yazi(nil, os.getenv("XDG_DATA_HOME")) end,
+  { desc = "Open Yazi in $XDG_DATA_HOME", })
+set('n', '<leader>db', function() require("yazi").yazi(nil,  os.getenv("HOME") .. "/.local/bin") end,
+  { desc = "Open Yazi in $HOME/.local/bin", })
+set('n', '<leader>dz', function() require("telescope").extensions.chezmoi.find_files() end,
+  { desc = 'Search Che[z]moi-managed dotfiles' })
+set('n', '<leader>ds', cmd.chezmoi.status, { desc = 'Chezmoi [S]tatus of dotfile' })
 
 set('n', '<leader>/', function()
   tsb.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -267,7 +316,7 @@ which_key.add { '<leader>ns', group = '[S]earch' }
 set('n', '<leader>nr', reload_config, { desc = '[R]eload the config' })
 set('n', '<leader>nu', function()
   vim.pack.update(nil, { force = true })
-  cmd('MasonUpdate')
+  update_all_mason_packages()
 end, { desc = '[U]pdate plugins and tools' })
 set('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'Show [M]ason' })
 set('n', '<leader>nsf', function() tsb.find_files { cwd = fn.stdpath 'config' } end, { desc = 'Search Neovim [f]iles' })
