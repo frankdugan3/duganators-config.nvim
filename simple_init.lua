@@ -60,16 +60,21 @@ api.nvim_create_autocmd('VimEnter', {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
-  callback = function(ev)
-    local bufnr = ev.buf
-    local edit_watch = function()
-      require("chezmoi.commands.__edit").watch(bufnr)
-    end
-    vim.schedule(edit_watch)
-  end,
+vim.api.nvim_create_autocmd("VimResized", {
+  pattern = '*',
+  command = 'lua require("fzf-lua").redraw()'
 })
+
+-- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+--   pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
+--   callback = function(ev)
+--     local bufnr = ev.buf
+--     local edit_watch = function()
+--       require("chezmoi.commands.__edit").watch(bufnr)
+--     end
+--     vim.schedule(edit_watch)
+--   end,
+-- })
 
 g.mapleader = leader
 g.maplocalleader = leader
@@ -136,6 +141,8 @@ else
 end
 
 vim.pack.add({
+  "https://github.com/ibhagwan/fzf-lua",
+  "https://github.com/MagicDuck/grug-far.nvim",
   "https://github.com/echasnovski/mini.nvim",
   "https://github.com/folke/todo-comments.nvim",
   "https://github.com/folke/which-key.nvim",
@@ -153,6 +160,19 @@ vim.pack.add({
   "https://github.com/xvzc/chezmoi.nvim",
   { src = "https://github.com/saghen/blink.cmp", version = "v1.6.0" },
 })
+
+local actions = require 'fzf-lua.actions'
+require('fzf-lua').setup({
+  fzf_bin = 'sk',
+  files = {
+    ['default'] = actions.file_edit,
+    ['ctrl-s']  = actions.file_split,
+    ['ctrl-v']  = actions.file_vsplit,
+    ['alt-q']   = actions.file_sel_to_qf,
+  },
+})
+
+require('grug-far').setup({ windowCreationCommand = 'edit' });
 
 require('chezmoi').setup({
   edit = {
@@ -196,11 +216,11 @@ require("telescope").setup({
     ['ui-select'] = {
       require('telescope.themes').get_dropdown(),
     },
-    fzf = {}
+    fzf = {},
   },
 })
-pcall(require('telescope').load_extension, 'fzf')
-pcall(require('telescope').load_extension, 'ui-select')
+-- require('telescope').load_extension('fzf')
+require('telescope').load_extension('ui-select')
 local tsb = require 'telescope.builtin'
 
 require("mason").setup()
@@ -275,7 +295,7 @@ which_key.add { '<leader>s', group = '[S]earch' }
 set('n', '<leader>sz', function() require("telescope").extensions.chezmoi.find_files() end,
   { desc = 'Search Che[z]moi-managed files' })
 set('n', '<leader>sh', tsb.help_tags, { desc = 'Search [h]elp' })
-set('n', '<leader>sk', tsb.keymaps, { desc = 'Search [k]eymaps' })
+set('n', '<leader>sk', '<cmd>FzfLua keymaps<cr>', { desc = 'Search [k]eymaps' })
 set('n', '<leader>sf', tsb.find_files, { desc = 'Search [f]iles' })
 set('n', '<leader>st', tsb.builtin, { desc = 'Search [t]elescope builtins' })
 set('n', '<leader>sw', tsb.grep_string, { desc = 'Search current [w]ord' })
@@ -285,17 +305,22 @@ set('n', '<leader>sr', tsb.resume, { desc = 'Search [r]esume' })
 set('n', '<leader>s.', tsb.oldfiles, { desc = 'Search recent files ("." for repeat)' })
 set('n', '<leader>sb', tsb.buffers, { desc = 'Search existing [b]uffers' })
 
+which_key.add { '<leader>r', group = '[r]eplace' }
+set({ 'n', 'x' }, '<leader>rv',
+  function() require('grug-far').open({ transient = true, visualSelectionUsage = 'operate-within-range' }) end,
+  { desc = 'grug-far: Search within [v]isual range' })
 
-which_key.add { '<leader>d', group = '[D]otfiles' }
+which_key.add { '<leader>d', group = '[d]otfiles' }
 set('n', '<leader>dc', function() require("yazi").yazi(nil, os.getenv("XDG_CONFIG_HOME")) end,
   { desc = "Open Yazi in $XDG_CONFIG_HOME", })
 set('n', '<leader>dl', function() require("yazi").yazi(nil, os.getenv("XDG_DATA_HOME")) end,
   { desc = "Open Yazi in $XDG_DATA_HOME", })
-set('n', '<leader>db', function() require("yazi").yazi(nil,  os.getenv("HOME") .. "/.local/bin") end,
+set('n', '<leader>db', function() require("yazi").yazi(nil, os.getenv("HOME") .. "/.local/bin") end,
   { desc = "Open Yazi in $HOME/.local/bin", })
 set('n', '<leader>dz', function() require("telescope").extensions.chezmoi.find_files() end,
   { desc = 'Search Che[z]moi-managed dotfiles' })
-set('n', '<leader>ds', cmd.chezmoi.status, { desc = 'Chezmoi [S]tatus of dotfile' })
+set('n', '<leader>dg', '<cmd><cr>',
+  { desc = 'Lazy[G]it for Che[z]moi-managed dotfiles' })
 
 set('n', '<leader>/', function()
   tsb.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
