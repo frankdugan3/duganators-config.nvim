@@ -16,6 +16,14 @@ return {
   },
   config = function()
     require('telescope').setup {
+      defaults = {
+        mappings = {
+          i = {
+            ['<M-d>'] = false,
+            ['<C-S-d>'] = require('telescope.actions').delete_buffer,
+          },
+        },
+      },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),

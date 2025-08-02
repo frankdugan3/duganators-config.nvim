@@ -41,6 +41,7 @@ return {
       },
     },
     formatters_by_ft = {
+      sh = { 'shfmt' },
       templ = { 'templ' },
       go = { 'goimports', 'gofmt' },
       rust = { 'rustfmt', lsp_format = 'fallback' },
