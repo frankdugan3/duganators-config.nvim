@@ -2,6 +2,22 @@ return { -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
   build = ':TSUpdate',
   event = { 'BufReadPre', 'BufNewFile' },
+  require("vim.treesitter.query").add_predicate("is-mise?", function(_, _, bufnr, _)
+    local filepath = vim.api.nvim_buf_get_name(tonumber(bufnr) or 0)
+    local filename = vim.fn.fnamemodify(filepath, ":t")
+
+    -- Check for files with "mise" in the filename ending with .toml
+    if string.match(filename, ".*mise.*%.toml$") then
+      return true
+    end
+
+    -- Check for config.toml files in a mise/ directory
+    if filename == "config.toml" and string.match(filepath, "/mise/config%.toml$") then
+      return true
+    end
+
+    return false
+  end, { force = true, all = false }),
   opts = {
     ensure_installed = {
       'bash',
