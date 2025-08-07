@@ -8,7 +8,7 @@ local fn = vim.fn
 -- local lsp = vim.lsp
 
 local config_file = debug.getinfo(1, 'S').source:match '@(.*)'
-local wallust_file = os.getenv 'HOME' .. '/.cache/wallust/colors_neopywal.vim'
+local wallust_file = os.getenv 'XDG_CACHE_HOME' .. '/wallust/colors_neopywal.vim'
 local tab_width = 2
 local leader = ' '
 
@@ -284,6 +284,8 @@ require('blink.cmp').setup {
   },
 }
 
+local lg = require 'lazygit'
+
 local which_key = require 'which-key'
 which_key.setup()
 
@@ -406,7 +408,7 @@ set('n', '<leader>dg', function()
 end, { desc = '[g]rep chezmoi source directory' })
 
 vim.keymap.set('n', '<leader>dl', function()
-  require('lazygit').lazygit(get_chezmoi_source_dir())
+  lg.lazygit(get_chezmoi_source_dir())
 end, { desc = '[l]azygit for chezmoi-managed dotfiles' })
 set('n', '<leader>/', '<cmd>FzfLua blines<cr>', { desc = '[/] Fuzzily search in current buffer' })
 
@@ -434,3 +436,8 @@ end, { desc = 'neovim search [f]iles' })
 set('n', '<leader>nsg', function()
   fzf.live_grep { cwd = fn.stdpath 'config' }
 end, { desc = 'neovim search [g]rep' })
+
+vim.keymap.set('n', '<leader>nl', function()
+  local config_dir = os.getenv 'XDG_CONFIG_HOME' .. '/nvim'
+  lg.lazygit(config_dir)
+end, { desc = '[l]azygit for neovim config' })
