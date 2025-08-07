@@ -63,16 +63,6 @@ api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-api.nvim_create_autocmd('VimEnter', {
-  desc = 'Open FzfLua when starting in directory',
-  pattern = { '*/', '.' },
-  callback = function()
-    if fn.isdirectory(fn.getcwd()) == 1 then
-      require('fzf-lua').files()
-    end
-  end,
-})
-
 vim.api.nvim_create_autocmd('VimResized', {
   pattern = '*',
   command = 'lua require("fzf-lua").redraw()',
@@ -257,6 +247,16 @@ fzf.setup {
   },
 }
 
+api.nvim_create_autocmd('VimEnter', {
+  desc = 'Open FzfLua when starting in directory',
+  pattern = { '*/', '.' },
+  callback = function()
+    if fn.isdirectory(fn.getcwd()) == 1 then
+      fzf.files()
+    end
+  end,
+})
+
 require('grug-far').setup { windowCreationCommand = 'edit' }
 
 require('mini.ai').setup { n_lines = 500 }
@@ -398,13 +398,13 @@ set('n', '<leader>ds', function()
 end, { desc = '[s]earch chezmoi-managed dotfiles' })
 
 set('n', '<leader>dg', function()
-  local managed_files = vim.fn.systemlist 'chezmoi managed --no-pager --path-style source-absolute'
-
   fzf.live_grep {
-    filespec = table.concat(managed_files, ' '),
+    cwd = get_chezmoi_source_dir(),
+    rg_opts = '--column --line-number --no-heading --color=always --smart-case --no-ignore-vcs',
     actions = fzf.defaults.actions.files,
   }
-end, { desc = '[g]rep chezmoi-managed dotfiles' })
+end, { desc = '[g]rep chezmoi source directory' })
+
 vim.keymap.set('n', '<leader>dl', function()
   require('lazygit').lazygit(get_chezmoi_source_dir())
 end, { desc = '[l]azygit for chezmoi-managed dotfiles' })
