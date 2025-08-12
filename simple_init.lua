@@ -22,22 +22,6 @@ local function reload_config()
   end)
 end
 
-local function update_all_mason_packages()
-  cmd 'MasonUpdate'
-  local registry = require 'mason-registry'
-  local installed_packages = registry.get_installed_package_names()
-
-  for _, pkg_name in ipairs(installed_packages) do
-    local pkg = registry.get_package(pkg_name)
-    local is_installed, installed_version = pcall(pkg.get_installed_version, pkg)
-    local is_latest, latest_version = pcall(pkg.get_latest_version, pkg)
-
-    if is_installed and is_latest and installed_version ~= latest_version then
-      pkg:install()
-    end
-  end
-end
-
 local function get_chezmoi_source_dir()
   local handle = io.popen 'chezmoi source-path'
   if handle then
@@ -176,9 +160,70 @@ vim.pack.add {
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-tree/nvim-web-devicons',
   'https://github.com/stevearc/conform.nvim',
+  'https://github.com/nvim-treesitter/nvim-treesitter',
   { src = 'https://github.com/saghen/blink.cmp', version = 'v1.6.0' },
 }
 
+require('nvim-treesitter.configs').setup {
+  -- Install parsers for languages you use
+  ensure_installed = {
+    'arduino',
+    'asm',
+    'bash',
+    'bibtex',
+    'css',
+    'csv',
+    'diff',
+    'dockerfile',
+    'editorconfig',
+    'eex',
+    'elixir',
+    'erlang',
+    'git_config',
+    'gitignore',
+    'glsl',
+    'go',
+    'gomod',
+    'gosum',
+    'gotmpl',
+    'gpg',
+    'graphql',
+    'heex',
+    'html',
+    'hyprlang',
+    'javascript',
+    'jq',
+    'latex',
+    'lua',
+    'markdown',
+    'mermaid',
+    'nginx',
+    'regex',
+    'rust',
+    'sql',
+    'templ',
+    'toml',
+    'typescript',
+    'typst',
+    'vhs',
+    'vim',
+    'vimdoc',
+    'wgsl',
+    'xml',
+    'yaml',
+    'zathurarc',
+    'zig',
+  },
+  sync_install = false,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true,
+  },
+}
 require('conform').setup {
   notify_on_error = false,
   format_on_save = function()
@@ -260,7 +305,14 @@ api.nvim_create_autocmd('VimEnter', {
 require('grug-far').setup { windowCreationCommand = 'edit' }
 
 require('mini.ai').setup { n_lines = 500 }
-require('mini.statusline').setup { use_icons = g.have_nerd_font }
+require('mini.statusline').setup {
+  use_icons = g.have_nerd_font,
+  set_vim_settings = true,
+  content = {
+    active = nil,
+    inactive = nil,
+  },
+}
 require('mini.surround').setup {
   custom_surroundings = { e = { output = { left = '<%= ', right = ' %>' } } },
   mappings = {
@@ -275,14 +327,21 @@ require('mini.surround').setup {
 }
 require('todo-comments').setup {}
 require('mason').setup()
-require('mason-lspconfig').setup()
+require('mason-lspconfig').setup {}
 
 require('blink.cmp').setup {
   fuzzy = {
     implementation = 'prefer_rust_with_warning',
     prebuilt_binaries = { download = true },
   },
+  sources = {
+    default = { 'lsp', 'path', 'snippets', 'buffer' },
+  },
 }
+
+vim.lsp.config('*', {
+  capabilities = require('blink.cmp').get_lsp_capabilities(),
+})
 
 local lg = require 'lazygit'
 
@@ -422,18 +481,15 @@ set('n', '<leader>nr', reload_config, { desc = 'neovim [r]eload config' })
 
 set('n', '<leader>nu', function()
   vim.pack.update(nil, { force = true })
-  update_all_mason_packages()
-end, { desc = 'neovim [u]pdate plugins and tools' })
+end, { desc = 'neovim [u]pdate plugins' })
 
 set('n', '<leader>nm', '<cmd>Mason<cr>', { desc = 'neovim [m]ason' })
 
-which_key.add { '<leader>ns', group = '[s]earch' }
-
-set('n', '<leader>nsf', function()
+set('n', '<leader>nf', function()
   fzf.files { cwd = fn.stdpath 'config' }
 end, { desc = 'neovim search [f]iles' })
 
-set('n', '<leader>nsg', function()
+set('n', '<leader>ng', function()
   fzf.live_grep { cwd = fn.stdpath 'config' }
 end, { desc = 'neovim search [g]rep' })
 
