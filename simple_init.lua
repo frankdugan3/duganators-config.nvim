@@ -52,6 +52,15 @@ vim.api.nvim_create_autocmd('VimResized', {
   command = 'lua require("fzf-lua").redraw()',
 })
 
+vim.api.nvim_create_autocmd('TermOpen', {
+  group = vim.api.nvim_create_augroup('custom-term-open', {}),
+  callback = function()
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.scrolloff = 0
+  end,
+})
+
 local chezmoi_source_dir = get_chezmoi_source_dir()
 if chezmoi_source_dir then
   vim.api.nvim_create_augroup('ChezmoiAutoApply', { clear = true })
@@ -350,7 +359,6 @@ which_key.setup()
 
 local set = vim.keymap.set
 
--- Hide highlighted search on enter or Esc
 set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 set('n', '<CR>', function()
   if vim.v.hlsearch == 1 then
@@ -364,6 +372,54 @@ end, { expr = true })
 set('', '<C-s>', '<cmd>w<cr>', { desc = 'Save (:w)' })
 set('', '<CS-s>', '<cmd>wa<cr>', { desc = 'Save all (:wa)' })
 
+local terminal_windows = {
+  ['H'] = { win = nil, buf = nil },
+  ['J'] = { win = nil, buf = nil },
+  ['K'] = { win = nil, buf = nil },
+  ['L'] = { win = nil, buf = nil },
+}
+
+local function toggle_terminal(direction)
+  local state = terminal_windows[direction]
+
+  if state.win and vim.api.nvim_win_is_valid(state.win) then
+    vim.api.nvim_win_hide(state.win)
+    state.win = nil
+  else
+    vim.cmd.new()
+    vim.cmd.wincmd(direction)
+    if direction == 'H' or direction == 'L' then
+      vim.api.nvim_win_set_width(0, 80)
+    else
+      vim.api.nvim_win_set_height(0, 12)
+    end
+
+    state.win = vim.api.nvim_get_current_win()
+
+    if state.buf and vim.api.nvim_buf_is_loaded(state.buf) then
+      vim.api.nvim_win_set_buf(state.win, state.buf)
+    else
+      vim.cmd.term()
+      state.buf = vim.api.nvim_win_get_buf(state.win)
+    end
+  end
+end
+
+local allModes = { 'n', 'i', 'v', 't' }
+set(allModes, '<C-S-h>', function()
+  toggle_terminal 'H'
+end)
+set(allModes, '<C-S-j>', function()
+  toggle_terminal 'J'
+end)
+set(allModes, '<C-S-k>', function()
+  toggle_terminal 'K'
+end)
+set(allModes, '<C-S-l>', function()
+  toggle_terminal 'L'
+end)
+set('t', '<C-Esc>', '<c-\\><c-n>')
+
 -- Basic window split movement keybinds
 set({ 'n', 'v' }, '<C-j>', '<C-w><C-j>')
 set({ 'n', 'v' }, '<C-k>', '<C-w><C-k>')
@@ -373,6 +429,10 @@ set('i', '<C-j>', '<Esc><C-w><C-j>')
 set('i', '<C-k>', '<Esc><C-w><C-k>')
 set('i', '<C-l>', '<Esc><C-w><C-l>')
 set('i', '<C-h>', '<Esc><C-w><C-h>')
+set('t', '<c-h>', '<c-\\><c-n><c-w>h')
+set('t', '<c-j>', '<c-\\><c-n><c-w>j')
+set('t', '<c-k>', '<c-\\><c-n><c-w>k')
+set('t', '<c-l>', '<c-\\><c-n><c-w>l')
 
 set('v', '<', '<gv', { desc = 'Dedent and reselect' })
 set('v', '>', '>gv', { desc = 'Indent and reselect' })
@@ -466,7 +526,7 @@ set('n', '<leader>dg', function()
   }
 end, { desc = '[g]rep chezmoi source directory' })
 
-vim.keymap.set('n', '<leader>dl', function()
+set('n', '<leader>dl', function()
   lg.lazygit(get_chezmoi_source_dir())
 end, { desc = '[l]azygit for chezmoi-managed dotfiles' })
 set('n', '<leader>/', '<cmd>FzfLua blines<cr>', { desc = '[/] Fuzzily search in current buffer' })
@@ -493,7 +553,7 @@ set('n', '<leader>ng', function()
   fzf.live_grep { cwd = fn.stdpath 'config' }
 end, { desc = 'neovim search [g]rep' })
 
-vim.keymap.set('n', '<leader>nl', function()
+set('n', '<leader>nl', function()
   local config_dir = os.getenv 'XDG_CONFIG_HOME' .. '/nvim'
   lg.lazygit(config_dir)
 end, { desc = '[l]azygit for neovim config' })
