@@ -125,10 +125,6 @@ o.virtualedit = 'block'
 o.winborder = 'rounded'
 o.wrap = true
 
-vim.diagnostic.config {
-  virtual_lines = true,
-}
-
 if vim.loop.fs_stat(wallust_file) then
   vim.pack.add { 'https://github.com/RedsXDD/neopywal.nvim' }
   require('neopywal').setup {
@@ -334,6 +330,7 @@ require('mini.surround').setup {
     update_n_lines = 'gsn',
   },
 }
+
 require('todo-comments').setup {}
 require('mason').setup()
 require('mason-lspconfig').setup {}
