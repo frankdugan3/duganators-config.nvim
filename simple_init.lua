@@ -32,6 +32,11 @@ local function get_chezmoi_source_dir()
   return nil
 end
 
+vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'CursorHoldI', 'FocusGained' }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = { '*' },
+})
+
 api.nvim_create_autocmd('BufWritePost', {
   desc = 'Reload config on save',
   group = api.nvim_create_augroup('ConfigReload', { clear = true }),
@@ -96,6 +101,7 @@ g.loaded_netrw = 1
 g.loaded_netrwPlugin = 1
 g.have_nerd_font = true
 
+o.autoread = true
 o.backupcopy = 'yes'
 o.breakindent = true
 o.clipboard = 'unnamedplus'
@@ -166,7 +172,7 @@ vim.pack.add {
   'https://github.com/nvim-tree/nvim-web-devicons',
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/nvim-treesitter/nvim-treesitter',
-  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.6.0' },
+  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.7.0' },
 }
 
 require('nvim-treesitter.configs').setup {
