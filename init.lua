@@ -268,7 +268,7 @@ fzf.setup {
       ['ctrl-u'] = fzf.actions.preview_page_up,
       ['ctrl-s'] = fzf.actions.file_split,
       ['ctrl-v'] = fzf.actions.file_vsplit,
-      ['ctrl-q'] = fzf.actions.file_sel_to_qf,
+      ['ctrl-q'] = { fn = fzf.actions.file_sel_to_qf, prefix = 'select-all' },
     },
     grep = {
       ['default'] = fzf.actions.file_edit,
@@ -276,7 +276,7 @@ fzf.setup {
       ['ctrl-u'] = fzf.actions.preview_page_up,
       ['ctrl-s'] = fzf.actions.file_split,
       ['ctrl-v'] = fzf.actions.file_vsplit,
-      ['ctrl-q'] = fzf.actions.file_sel_to_qf,
+      ['ctrl-q'] = { fn = fzf.actions.file_sel_to_qf, prefix = 'select-all' },
     },
   },
 }
