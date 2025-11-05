@@ -264,6 +264,7 @@ require('conform').setup {
     typst = { 'tinymist' },
     lua = { 'stylua' },
     javascript = { 'prettierd', 'prettier' },
+    typescript = { 'prettierd', 'prettier' },
     markdown = { 'prettierd', 'prettier' },
     html = { 'prettierd', 'prettier' },
     css = { 'prettierd', 'prettier' },
@@ -533,6 +534,9 @@ end, { desc = '[S]earch [/] in Open Files' })
 
 which_key.add { '<leader>n', group = '[n]eovim' }
 
+set('n', '<leader>ne', function()
+  vim.cmd.edit(vim.fn.stdpath 'config' .. '/init.lua')
+end, { desc = 'neovim [e]dit init.lua' })
 set('n', '<leader>nr', reload_config, { desc = 'neovim [r]eload config' })
 
 set('n', '<leader>nu', function()
