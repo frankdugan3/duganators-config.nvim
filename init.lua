@@ -126,6 +126,21 @@ o.virtualedit = 'block'
 o.winborder = 'rounded'
 o.wrap = true
 
+local highlights = {
+  Search = { ctermbg = 'Yellow', ctermfg = 'Black' },
+  IncSearch = { ctermbg = 'Yellow', ctermfg = 'Black' },
+  Visual = { ctermbg = 'Yellow', ctermfg = 'Black' },
+  LineNr = { ctermfg = 'Yellow' },
+  CursorColumn = { ctermbg = 'DarkGray' },
+  StatusLine = { ctermbg = 'Yellow', ctermfg = 'Black' },
+  StatusLineNC = { ctermbg = 'DarkGray', ctermfg = 'White' },
+  Cursor = { ctermbg = 'White', ctermfg = 'Black' },
+}
+
+for group, opts in pairs(highlights) do
+  vim.api.nvim_set_hl(0, group, opts)
+end
+
 pack.add {
   'https://github.com/ibhagwan/fzf-lua',
   'https://github.com/MagicDuck/grug-far.nvim',
