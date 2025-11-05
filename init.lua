@@ -27,7 +27,7 @@ local function get_chezmoi_source_dir()
   return nil
 end
 
-vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'CursorHoldI', 'FocusGained' }, {
+api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'CursorHoldI', 'FocusGained' }, {
   command = "if mode() != 'c' | checktime | endif",
   pattern = { '*' },
 })
@@ -47,13 +47,13 @@ api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd('VimResized', {
+api.nvim_create_autocmd('VimResized', {
   pattern = '*',
   command = 'lua require("fzf-lua").redraw()',
 })
 
-vim.api.nvim_create_autocmd('TermOpen', {
-  group = vim.api.nvim_create_augroup('custom-term-open', {}),
+api.nvim_create_autocmd('TermOpen', {
+  group = api.nvim_create_augroup('custom-term-open', {}),
   callback = function()
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
@@ -63,9 +63,9 @@ vim.api.nvim_create_autocmd('TermOpen', {
 
 local chezmoi_source_dir = get_chezmoi_source_dir()
 if chezmoi_source_dir then
-  vim.api.nvim_create_augroup('ChezmoiAutoApply', { clear = true })
+  api.nvim_create_augroup('ChezmoiAutoApply', { clear = true })
 
-  vim.api.nvim_create_autocmd('BufWritePost', {
+  api.nvim_create_autocmd('BufWritePost', {
     group = 'ChezmoiAutoApply',
     pattern = chezmoi_source_dir .. '/*',
     callback = function()
@@ -95,7 +95,11 @@ g.maplocalleader = leader
 g.loaded_netrw = 1
 g.loaded_netrwPlugin = 1
 g.have_nerd_font = true
+g.swap_handler_config = {
+  auto_delete_clean = true,
+}
 
+o.swapfile = false
 o.autoread = true
 o.backupcopy = 'yes'
 o.breakindent = true
@@ -138,7 +142,7 @@ local highlights = {
 }
 
 for group, opts in pairs(highlights) do
-  vim.api.nvim_set_hl(0, group, opts)
+  api.nvim_set_hl(0, group, opts)
 end
 
 pack.add {
@@ -379,25 +383,25 @@ local terminal_windows = {
 local function toggle_terminal(direction)
   local state = terminal_windows[direction]
 
-  if state.win and vim.api.nvim_win_is_valid(state.win) then
-    vim.api.nvim_win_hide(state.win)
+  if state.win and api.nvim_win_is_valid(state.win) then
+    api.nvim_win_hide(state.win)
     state.win = nil
   else
     vim.cmd.new()
     vim.cmd.wincmd(direction)
     if direction == 'H' or direction == 'L' then
-      vim.api.nvim_win_set_width(0, 80)
+      api.nvim_win_set_width(0, 80)
     else
-      vim.api.nvim_win_set_height(0, 12)
+      api.nvim_win_set_height(0, 12)
     end
 
-    state.win = vim.api.nvim_get_current_win()
+    state.win = api.nvim_get_current_win()
 
-    if state.buf and vim.api.nvim_buf_is_loaded(state.buf) then
-      vim.api.nvim_win_set_buf(state.win, state.buf)
+    if state.buf and api.nvim_buf_is_loaded(state.buf) then
+      api.nvim_win_set_buf(state.win, state.buf)
     else
       vim.cmd.term()
-      state.buf = vim.api.nvim_win_get_buf(state.win)
+      state.buf = api.nvim_win_get_buf(state.win)
     end
   end
 end
@@ -529,7 +533,7 @@ end, { desc = '[l]azygit for chezmoi-managed dotfiles' })
 set('n', '<leader>/', '<cmd>FzfLua blines<cr>', { desc = '[/] Fuzzily search in current buffer' })
 
 set('n', '<leader>s/', function()
-  fzf.live_grep { filespec = table.concat(vim.tbl_map(vim.api.nvim_buf_get_name, vim.api.nvim_list_bufs()), ' ') }
+  fzf.live_grep { filespec = table.concat(vim.tbl_map(api.nvim_buf_get_name, api.nvim_list_bufs()), ' ') }
 end, { desc = '[S]earch [/] in Open Files' })
 
 which_key.add { '<leader>n', group = '[n]eovim' }
