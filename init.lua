@@ -551,7 +551,7 @@ set('n', '<leader>ne', function()
 end, { desc = 'neovim [e]dit init.lua' })
 
 set('n', '<leader>nc', function()
-  vim.cmd.edit(vim.fn.stdpath 'config' .. '/init.lua')
+  vim.cmd.edit(vim.fn.stdpath 'config' .. '/lua/colorscheme.lua')
 end, { desc = 'neovim edit [c]olorscheme.lua' })
 
 set('n', '<leader>nr', reload_config, { desc = 'neovim [r]eload config' })
