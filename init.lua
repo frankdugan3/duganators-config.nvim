@@ -360,6 +360,18 @@ which_key.setup()
 
 local set = vim.keymap.set
 
+set('n', '*', function()
+  local word = vim.fn.expand '<cword>'
+  fn.setreg('/', '\\<' .. word .. '\\>')
+  vim.opt_local.hlsearch = true
+end, { silent = true })
+
+set('v', '*', function()
+  local text = vim.fn.getregion(vim.fn.getpos 'v', vim.fn.getpos '.', { type = vim.fn.mode() })[1]
+  vim.fn.setreg('/', vim.fn.escape(text, '/\\'))
+  vim.opt_local.hlsearch = true
+end, { silent = true })
+
 set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 set('n', '<CR>', function()
   if vim.v.hlsearch == 1 then
