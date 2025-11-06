@@ -39,6 +39,19 @@ api.nvim_create_autocmd('BufWritePost', {
   callback = reload_config,
 })
 
+api.nvim_create_autocmd('BufWritePost', {
+  desc = 'Reload colorscheme on save',
+  group = api.nvim_create_augroup('ColorschemeReload', { clear = true }),
+  pattern = vim.fn.stdpath 'config' .. '/lua/colorscheme.lua',
+  callback = function()
+    package.loaded['colorscheme'] = nil
+    require 'colorscheme'
+    vim.schedule(function()
+      vim.notify('Colorscheme reloaded!', vim.log.levels.INFO)
+    end)
+  end,
+})
+
 api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking text',
   group = api.nvim_create_augroup('HighlightYank', { clear = true }),
@@ -95,11 +108,9 @@ g.maplocalleader = leader
 g.loaded_netrw = 1
 g.loaded_netrwPlugin = 1
 g.have_nerd_font = true
-g.swap_handler_config = {
-  auto_delete_clean = true,
-}
-
 o.swapfile = false
+g.swap_handler_config = { auto_delete_clean = true }
+
 o.autoread = true
 o.backupcopy = 'yes'
 o.breakindent = true
@@ -124,32 +135,17 @@ o.smartcase = true
 o.splitbelow = true
 o.splitright = true
 o.tabstop = tab_width
-o.termguicolors = false
 o.undofile = true
 o.virtualedit = 'block'
 o.winborder = 'rounded'
 o.wrap = true
 
-local highlights = {
-  Search = { ctermbg = 'Yellow', ctermfg = 'Black' },
-  IncSearch = { ctermbg = 'Yellow', ctermfg = 'Black' },
-  Visual = { ctermbg = 'Yellow', ctermfg = 'Black' },
-  LineNr = { ctermfg = 'Yellow' },
-  CursorColumn = { ctermbg = 'DarkGray' },
-  StatusLine = { ctermbg = 'Yellow', ctermfg = 'Black' },
-  StatusLineNC = { ctermbg = 'DarkGray', ctermfg = 'White' },
-  Cursor = { ctermbg = 'White', ctermfg = 'Black' },
-}
-
-for group, opts in pairs(highlights) do
-  api.nvim_set_hl(0, group, opts)
-end
+require 'colorscheme'
 
 pack.add {
   'https://github.com/ibhagwan/fzf-lua',
   'https://github.com/MagicDuck/grug-far.nvim',
   'https://github.com/echasnovski/mini.nvim',
-  'https://github.com/folke/todo-comments.nvim',
   'https://github.com/folke/which-key.nvim',
   'https://github.com/kdheepak/lazygit.nvim',
   'https://github.com/mason-org/mason-lspconfig.nvim',
@@ -164,7 +160,6 @@ pack.add {
 }
 
 require('nvim-treesitter.configs').setup {
-  -- Install parsers for languages you use
   ensure_installed = {
     'arduino',
     'asm',
@@ -335,7 +330,6 @@ require('mini.surround').setup {
   },
 }
 
-require('todo-comments').setup {}
 require('mason').setup()
 require('mason-lspconfig').setup {}
 
@@ -368,11 +362,14 @@ end, { silent = true })
 
 set('v', '*', function()
   local text = vim.fn.getregion(vim.fn.getpos 'v', vim.fn.getpos '.', { type = vim.fn.mode() })[1]
-  vim.fn.setreg('/', vim.fn.escape(text, '/\\'))
+  local escaped = vim.fn.escape(text, '/\\')
+  vim.fn.setreg('/', escaped)
+  vim.cmd 'normal! \27'
   vim.opt_local.hlsearch = true
 end, { silent = true })
 
 set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
 set('n', '<CR>', function()
   if vim.v.hlsearch == 1 then
     cmd.nohl()
@@ -433,7 +430,6 @@ set(allModes, '<C-S-l>', function()
 end)
 set('t', '<C-Esc>', '<c-\\><c-n>')
 
--- Basic window split movement keybinds
 set({ 'n', 'v' }, '<C-j>', '<C-w><C-j>')
 set({ 'n', 'v' }, '<C-k>', '<C-w><C-k>')
 set({ 'n', 'v' }, '<C-l>', '<C-w><C-l>')
@@ -553,6 +549,11 @@ which_key.add { '<leader>n', group = '[n]eovim' }
 set('n', '<leader>ne', function()
   vim.cmd.edit(vim.fn.stdpath 'config' .. '/init.lua')
 end, { desc = 'neovim [e]dit init.lua' })
+
+set('n', '<leader>ne', function()
+  vim.cmd.edit(vim.fn.stdpath 'config' .. '/init.lua')
+end, { desc = 'neovim edit [c]olorscheme.lua' })
+
 set('n', '<leader>nr', reload_config, { desc = 'neovim [r]eload config' })
 
 set('n', '<leader>nu', function()
