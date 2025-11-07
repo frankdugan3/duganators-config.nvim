@@ -217,6 +217,13 @@ require('nvim-treesitter.configs').setup {
   indent = {
     enable = true,
   },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      node_incremental = '<CR>',
+      node_decremental = '<BS>',
+    },
+  },
 }
 require('conform').setup {
   notify_on_error = false,
