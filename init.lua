@@ -156,7 +156,15 @@ pack.add {
   'https://github.com/nvim-tree/nvim-web-devicons',
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/nvim-treesitter/nvim-treesitter',
-  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.7.0' },
+  'https://github.com/coder/claudecode.nvim',
+  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.8.0' },
+}
+
+require('claudecode').setup {
+  git_repo_cwd = true,
+  opts = {
+    terminal_cmd = '~/.local/bin/claude',
+  },
 }
 
 require('nvim-treesitter.configs').setup {
@@ -225,6 +233,7 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
 require('conform').setup {
   notify_on_error = false,
   format_on_save = function()
@@ -581,3 +590,15 @@ set('n', '<leader>nl', function()
   local config_dir = os.getenv 'XDG_CONFIG_HOME' .. '/nvim'
   lg.lazygit(config_dir)
 end, { desc = '[l]azygit for neovim config' })
+
+which_key.add { '<leader>a', group = 'AI/Claude Code' }
+
+set('n', '<leader>ac', '<cmd>ClaudeCode<cr>', { desc = 'Toggle Claude' })
+set('n', '<leader>af', '<cmd>ClaudeCodeFocus<cr>', { desc = 'Focus Claude' })
+set('n', '<leader>ar', '<cmd>ClaudeCode --resume<cr>', { desc = 'Resume Claude' })
+set('n', '<leader>aC', '<cmd>ClaudeCode --continue<cr>', { desc = 'Continue Claude' })
+set('n', '<leader>am', '<cmd>ClaudeCodeSelectModel<cr>', { desc = 'Select Claude model' })
+set('n', '<leader>ab', '<cmd>ClaudeCodeAdd %<cr>', { desc = 'Add current buffer' })
+set('v', '<leader>as', '<cmd>ClaudeCodeSend<cr>', { desc = 'Send to Claude' })
+set('n', '<leader>aa', '<cmd>ClaudeCodeDiffAccept<cr>', { desc = 'Accept diff' })
+set('n', '<leader>ad', '<cmd>ClaudeCodeDiffDeny<cr>', { desc = 'Deny diff' })
