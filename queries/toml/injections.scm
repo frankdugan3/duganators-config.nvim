@@ -28,7 +28,7 @@
   (#match? @injection.content "^['\"]{3}\n*.*") ; multiline
   (#not-match? @injection.content "^['\"]{3}\n*#!") ; no shebang
   (#offset! @injection.content 0 3 0 -3) ; rm quotes
-  (#set! injection.language "sh") ; default to sh
+  (#set! injection.language "bash") ; default to bash
 )
 
 (pair
@@ -38,5 +38,5 @@
   (#is-mise?)
   (#not-match? @injection.content "^['\"]{3}") ; not multiline
   (#offset! @injection.content 0 1 0 -1) ; rm quotes
-  (#set! injection.language "sh") ; default to sh
+  (#set! injection.language "bash") ; default to bash
 )
