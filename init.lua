@@ -157,7 +157,7 @@ pack.add {
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/coder/claudecode.nvim',
-  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.8.0' },
+  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.9.1' },
 }
 
 require('claudecode').setup {
