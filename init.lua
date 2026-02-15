@@ -285,6 +285,7 @@ require('conform').setup {
     typst = { 'tinymist' },
     lua = { 'stylua' },
     javascript = { 'prettierd', 'prettier' },
+    json = { 'prettierd', 'prettier' },
     typescript = { 'prettierd', 'prettier' },
     markdown = { 'prettierd', 'prettier' },
     html = { 'prettierd', 'prettier' },
