@@ -369,10 +369,21 @@ require('blink.cmp').setup {
   sources = {
     default = { 'lsp', 'path', 'snippets', 'buffer' },
   },
+  completion = {
+    documentation = {
+      auto_show = true,
+    },
+  },
 }
 
 lsp.config('*', {
   capabilities = require('blink.cmp').get_lsp_capabilities(),
+})
+
+vim.lsp.config('expert', {
+  flags = {
+    allow_incremental_sync = false,
+  },
 })
 
 local lg = require 'lazygit'
