@@ -157,6 +157,7 @@ pack.add {
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/coder/claudecode.nvim',
+  'https://github.com/dbernheisel/hex-cmp',
   { src = 'https://github.com/saghen/blink.cmp', version = 'v1.9.1' },
 }
 
@@ -368,6 +369,12 @@ require('blink.cmp').setup {
   },
   sources = {
     default = { 'lsp', 'path', 'snippets', 'buffer' },
+    per_filetype = {
+      elixir = { inherit_defaults = true, 'hex' },
+    },
+    providers = {
+      hex = { name = 'hex', module = 'hex_cmp', async = true },
+    },
   },
   completion = {
     documentation = {
@@ -384,6 +391,15 @@ vim.lsp.config('expert', {
   flags = {
     allow_incremental_sync = false,
   },
+})
+
+api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local bufname = api.nvim_buf_get_name(args.buf)
+    if bufname:match 'mix%.exs' then
+      require('hex_cmp.hover').attach(args.buf)
+    end
+  end,
 })
 
 local lg = require 'lazygit'
