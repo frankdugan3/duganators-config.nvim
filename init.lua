@@ -528,6 +528,9 @@ set('n', '<leader>gr', '<cmd>LazyGitFilter<cr>', { desc = 'lazygit [r]eflog' })
 set('n', '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', { desc = 'lazygit current [f]ile' })
 set('n', '<leader>gc', '<cmd>LazyGitFilterCurrentFile<cr>', { desc = 'lazygit [c]urrent file reflog' })
 
+which_key.add { '<leader>w', group = '[w]orkspace' }
+set('n', '<leader>wd', vim.diagnostic.setqflist, { desc = '[w]orkspace [d]iagnostic quickfix list' })
+
 set('n', '<leader>\\', '<cmd>Yazi<cr>', { desc = 'open yazi at the current file' })
 set('n', '<c-up>', '<cmd>Yazi toggle<cr>', { desc = 'resume the last yazi session' })
 
