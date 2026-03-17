@@ -8,8 +8,20 @@
 (sigil
   (sigil_name) @_sigil_name
   (quoted_content) @injection.content
+  (#any-of? @_sigil_name "TS")
+  (#set! injection.language "typescript"))
+
+(sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content
   (#any-of? @_sigil_name "CSS")
   (#set! injection.language "css"))
+
+(sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @injection.content
+  (#any-of? @_sigil_name "HTML")
+  (#set! injection.language "html"))
 
 (sigil
   (sigil_name) @_sigil_name
