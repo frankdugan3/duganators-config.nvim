@@ -246,7 +246,7 @@ require('conform').setup {
   format_on_save = function()
     return {
       timeout_ms = 2000,
-      lsp_fallback = true,
+      lsp_format = 'fallback',
     }
   end,
   formatters = {
@@ -254,6 +254,7 @@ require('conform').setup {
       command = 'ast-grep',
       args = { 'scan', '--update-all', '$FILENAME' },
       stdin = false,
+      exit_codes = { 0, 1 },
     },
     superhtml = {
       inherit = false,
@@ -286,7 +287,7 @@ require('conform').setup {
     sh = { 'ast-grep', 'shfmt' },
     templ = { 'templ' },
     go = { 'ast-grep', 'goimports', 'gofmt' },
-    elixir = { 'ast-grep', 'lsp', mix_format = 'fallback' },
+    elixir = { 'ast-grep', 'mix_format', lsp_format = 'fallback' },
     rust = { 'ast-grep', 'rustfmt', lsp_format = 'fallback' },
     typst = { 'ast-grep', 'tinymist' },
     lua = { 'ast-grep', 'stylua' },
