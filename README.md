@@ -9,9 +9,7 @@ It's not meant for everyone, but can serve as a source of ideas or a starting po
 It's not stable or perfectly thought out. Things will change, break and get swapped around as we each grow in our vim knowledge.
 
 > [!WARNING]  
-> This config requires `vim.pack`, which is only available in >= `0.12`, (currently unreleased).
->
-> I use [bob](https://github.com/MordechaiHadad/bob) to install nightly builds.
+> This config requires `vim.pack`, which is only available in >= `0.12`.
 
 ## Origin
 
