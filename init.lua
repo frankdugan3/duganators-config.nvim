@@ -142,6 +142,8 @@ o.wrap = true
 
 require 'colorscheme'
 
+require('vim._core.ui2').enable {}
+
 pack.add {
   'https://github.com/ibhagwan/fzf-lua',
   'https://github.com/MagicDuck/grug-far.nvim',
