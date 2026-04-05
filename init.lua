@@ -158,7 +158,7 @@ pack.add {
   'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/coder/claudecode.nvim',
   'https://github.com/dbernheisel/hex-cmp',
-  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.10.1' },
+  { src = 'https://github.com/saghen/blink.cmp', version = 'v1.10.2' },
 }
 
 require('claudecode').setup {
