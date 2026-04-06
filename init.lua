@@ -27,6 +27,20 @@ local function get_chezmoi_source_dir()
   return nil
 end
 
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'TSUpdate',
+  callback = function()
+    require('nvim-treesitter.parsers').lua.install_info.generate = true
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { '*' },
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
+})
+
 api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'CursorHoldI', 'FocusGained' }, {
   command = "if mode() != 'c' | checktime | endif",
   pattern = { '*' },
@@ -157,76 +171,60 @@ pack.add {
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-tree/nvim-web-devicons',
   'https://github.com/stevearc/conform.nvim',
-  'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/dbernheisel/hex-cmp',
+  { src = 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'main' },
   { src = 'https://github.com/saghen/blink.cmp', version = 'v1.10.2' },
 }
 
-require('nvim-treesitter.configs').setup {
-  ensure_installed = {
-    'arduino',
-    'asm',
-    'bash',
-    'bibtex',
-    'css',
-    'csv',
-    'diff',
-    'dockerfile',
-    'editorconfig',
-    'eex',
-    'elixir',
-    'erlang',
-    'git_config',
-    'gitignore',
-    'glsl',
-    'go',
-    'gomod',
-    'gosum',
-    'gotmpl',
-    'gpg',
-    'graphql',
-    'heex',
-    'html',
-    'hyprlang',
-    'javascript',
-    'jq',
-    'latex',
-    'lua',
-    'markdown',
-    'mermaid',
-    'nginx',
-    'regex',
-    'rust',
-    'sql',
-    'templ',
-    'toml',
-    'typescript',
-    'typst',
-    'vhs',
-    'vim',
-    'vimdoc',
-    'wgsl',
-    'xml',
-    'yaml',
-    'zathurarc',
-    'zig',
-  },
-  sync_install = false,
-  auto_install = true,
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-  indent = {
-    enable = true,
-  },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      node_incremental = '<CR>',
-      node_decremental = '<BS>',
-    },
-  },
+local ts = require 'nvim-treesitter'
+
+ts.install {
+  'arduino',
+  'asm',
+  'bash',
+  'bibtex',
+  'css',
+  'csv',
+  'diff',
+  'dockerfile',
+  'editorconfig',
+  'eex',
+  'elixir',
+  'erlang',
+  'git_config',
+  'gitignore',
+  'glsl',
+  'go',
+  'gomod',
+  'gosum',
+  'gotmpl',
+  'gpg',
+  'graphql',
+  'heex',
+  'html',
+  'hyprlang',
+  'javascript',
+  'jq',
+  'latex',
+  'lua',
+  'markdown',
+  'mermaid',
+  'nginx',
+  'regex',
+  'rust',
+  'sql',
+  'templ',
+  'toml',
+  'typescript',
+  'typst',
+  'vhs',
+  'vim',
+  'vimdoc',
+  'wgsl',
+  'xml',
+  'yaml',
+  'zathurarc',
+  'zig',
 }
 
 require('vim.treesitter.query').add_predicate('is-mise?', function(_, _, bufnr, _)
@@ -420,14 +418,51 @@ end, { silent = true })
 
 set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
-set('n', '<CR>', function()
-  if vim.v.hlsearch == 1 then
-    cmd.nohl()
-    return ''
-  else
-    return '<CR>'
+local selection_stack = {}
+
+local function select_node(node)
+  local sr, sc, er, ec = node:range()
+  fn.setpos("'<", { 0, sr + 1, sc + 1, 0 })
+  fn.setpos("'>", { 0, er + 1, ec, 0 })
+  cmd 'normal! gv'
+end
+
+api.nvim_create_autocmd('ModeChanged', {
+  pattern = '*:n',
+  callback = function()
+    selection_stack = {}
+  end,
+})
+
+set({ 'n', 'x' }, '<CR>', function()
+  local bt = vim.bo.buftype
+  if bt == 'quickfix' or bt == 'loclist' then
+    return vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<CR>', true, false, true), 'n', false)
   end
-end, { expr = true })
+  if vim.fn.mode() == 'n' and vim.v.hlsearch == 1 then
+    cmd.nohl()
+    return
+  end
+  local node
+  if #selection_stack == 0 then
+    node = vim.treesitter.get_node()
+  else
+    node = selection_stack[#selection_stack]:parent()
+  end
+  if not node then
+    return
+  end
+  table.insert(selection_stack, node)
+  select_node(node)
+end)
+
+set('x', '<BS>', function()
+  if #selection_stack <= 1 then
+    return
+  end
+  table.remove(selection_stack)
+  select_node(selection_stack[#selection_stack])
+end)
 
 set('', '<C-s>', '<cmd>w<cr>', { desc = 'Save (:w)' })
 set('', '<CS-s>', '<cmd>wa<cr>', { desc = 'Save all (:wa)' })
