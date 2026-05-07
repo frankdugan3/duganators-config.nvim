@@ -267,8 +267,8 @@ require('conform').setup {
       args = { 'fmt', '--stdin-schema' },
     },
     mix_format = {
-      command = 'mix',
-      args = { 'format', '--stdin-filename', '$FILENAME', '-' },
+      command = 'sh',
+      args = { '-c', 'mix format --stdin-filename "$1" - | grep -v "^==> "', '--', '$FILENAME' },
       stdin = true,
       env = {
         MIX_QUIET = '1',
